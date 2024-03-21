@@ -27,10 +27,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # package
     'rest_framework',
+    'rest_framework.authtoken',
 
     # apps
     'user_auth',
-
+    'account',
 ]
 
 MIDDLEWARE = [
@@ -106,7 +107,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = "user_auth.CustomUser"
+AUTH_USER_MODEL = "account.CustomUser"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

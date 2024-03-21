@@ -19,3 +19,8 @@ class SingupSerializer(serializers.Serializer):
             raise serializers.ValidationError('email is already take', status.HTTP_400_BAD_REQUEST)
 
         return attrs
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=100, required=True)
+    password = serializers.CharField(max_length=50, required=True)

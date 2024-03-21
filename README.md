@@ -5,3 +5,5 @@ lets go!
 
 ### TODO
 - [x] singup-api
+- [ ] add user token to header
+- [ ] add validators for password

@@ -5,5 +5,8 @@ lets go!
 
 ### TODO
 - [x] singup-api
-- [ ] add user token to header
+- [x] login-api
+- [x] logout-api
+- [x] add user token to cookie
 - [ ] add validators for password
+- [ ] add forget password via email

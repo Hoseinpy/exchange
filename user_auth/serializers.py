@@ -24,3 +24,19 @@ class SingupSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=100, required=True)
     password = serializers.CharField(max_length=50, required=True)
+
+
+class ForgetPasswordSerializerStep1(serializers.Serializer):
+    email = serializers.EmailField(max_length=100, required=True)
+
+
+class ForgetPasswordSerializerStep2(serializers.Serializer):
+    password = serializers.CharField(max_length=50, required=True)
+    password2 = serializers.CharField(max_length=50, required=True)
+
+    def validate(self, attrs):
+
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError('password is not match', status.HTTP_400_BAD_REQUEST)
+
+        return attrs

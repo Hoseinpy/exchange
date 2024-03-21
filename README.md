@@ -9,4 +9,5 @@ lets go!
 - [x] logout-api
 - [x] add user token to cookie
 - [ ] add validators for password
-- [ ] add forget password via email
+- [x] add forget password via email
+- [x] fix forget password verify view

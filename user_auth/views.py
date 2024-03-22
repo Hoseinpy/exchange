@@ -49,7 +49,7 @@ class LoginAPiView(APIView):
                 token = Token.objects.filter(user=user).first()
                 response = Response()
 
-                response.set_cookie(key='token', value=token, max_age=10, httponly=True)
+                response.set_cookie(key='token', value=token, max_age=43200, httponly=True)
                 response.data = {
                     'status': 'success',
                 }
@@ -99,7 +99,7 @@ class ForgetPasswordVerifyAPIView(APIView):
         user = User.objects.filter(verify_code=verify_code).first()
         if user is not None:
             return Response({'status': 'you can change password'}, status=status.HTTP_200_OK)
-        return render(request, 'user_auth/404.html') # todo: is render template for developer mode
+        return render(request, 'user_auth/404.html') # is render template for developer mode
 
     def post(self, request, verify_code):
         user = User.objects.filter(verify_code=verify_code).first()

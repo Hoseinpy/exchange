@@ -28,7 +28,10 @@ class SingupApiView(APIView):
     def post(self, request):
         serializer = SingupSerializer(data=request.data)
         if serializer.is_valid():
-            user = User.objects.create(email=serializer.data.get('email'), verify_code=get_random_string(length=72))
+            user = User.objects.create(email=serializer.data.get('email'),
+                                        verify_code=get_random_string(length=72),
+                                          first_name=serializer.data.get('first_name'),
+                                          last_name=serializer.data.get('last_name'))
             user.set_password(serializer.data.get('password'))
             user.save()
             return Response({'status': 'success'}, status=status.HTTP_201_CREATED)

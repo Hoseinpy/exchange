@@ -6,6 +6,8 @@ User = get_user_model()
 
 
 class SingupSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=30, required=True)
+    last_name = serializers.CharField(max_length=30, required=True)
     email = serializers.EmailField(max_length=100, required=True)
     password = serializers.CharField(max_length=50, required=True)
     password2 = serializers.CharField(max_length=50, required=True)

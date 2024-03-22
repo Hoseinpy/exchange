@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, CurrencyWallet, Profile
+from .models import CustomUser, CurrencyWallet
 
 
 class CustomUserAdmin(UserAdmin):
@@ -8,15 +8,15 @@ class CustomUserAdmin(UserAdmin):
     list_display = ("id", "email", "is_staff", "is_active",)
     list_filter = ("email", "is_staff", "is_active",)
     fieldsets = (
-        (None, {"fields": ("email", "password", "verify_code", "ir_wallet")}),
-        ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
+        (None, {"fields": ("email", "password", "first_name", "last_name", "user_level", "ir_wallet", "verify_code")}),
+        ("Permissions", {"fields": ("is_authentication", "is_staff", "is_active")}),
     )
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
             "fields": (
                 "email", "password1", "password2", "is_staff",
-                "is_active", "groups", "user_permissions"
+                "is_active", "user_permissions"
             )}
          ),
     )
@@ -29,11 +29,5 @@ class CurrencyAdmin(admin.ModelAdmin):
     list_filter = ("user",)
 
 
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("id", "user",)
-    list_filter = ("user",)
-
-
-admin.site.register(Profile, ProfileAdmin)
 admin.site.register(CurrencyWallet, CurrencyAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)

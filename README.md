@@ -8,7 +8,7 @@ lets go!
 - [x] login api
 - [x] logout api
 - [x] add user token to cookie
-- [ ] add validators for password
+- [x] add validators for password
 - [x] add forget password via email
 - [x] fix forget password verify view
 - [x] profile api
@@ -20,7 +20,8 @@ lets go!
 - [ ] add user level
 - [ ] add btc momentary price to main page
 - [ ] add command for all views
-- [ ] Improving the admin page
+- [x] Improving basic the admin page
+- [ ] Improving full the admin page
 - [ ] add more info to user model
 - [ ] create dashboard api to show user wallets
 - [ ] add cart-bank api to add

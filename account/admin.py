@@ -5,8 +5,8 @@ from .models import CustomUser, CurrencyWallet
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ("id", "email", "is_staff", "is_active",)
-    list_filter = ("email", "is_staff", "is_active",)
+    list_display = ("id", "email", "user_level", "is_authentication", "is_staff", "is_active",)
+    list_filter = ("is_authentication", "user_level", "is_staff", "is_active",)
     fieldsets = (
         (None, {"fields": ("email", "password", "first_name", "last_name", "user_level", "ir_wallet", "verify_code")}),
         ("Permissions", {"fields": ("is_authentication", "is_staff", "is_active")}),

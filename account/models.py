@@ -54,7 +54,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, null=True)
     last_name = models.CharField(max_length=30, null=True)
     verify_code = models.CharField(max_length=72, null=True)
-    ir_wallet = models.DecimalField(max_digits=30, decimal_places=0, null=True, blank=True)
     user_level = models.CharField(max_length=4, choices=LEVEL_CHOICES, null=True, default=0)
     is_authentication = models.BooleanField(default=False, null=True)
     is_staff = models.BooleanField(default=False)
@@ -80,6 +79,15 @@ class CurrencyWallet(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=30, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+
+class IrWallet(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=20)
+    price = models.DecimalField(max_digits=30, decimal_places=0)
 
     def __str__(self):
         return self.name

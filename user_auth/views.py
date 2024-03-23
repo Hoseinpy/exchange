@@ -15,9 +15,12 @@ from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from utils.send_email import send_email
+from django.contrib.auth.password_validation import validate_password
+
 
 
 User = get_user_model()
+
 
 
 @method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
@@ -29,12 +32,12 @@ class SingupApiView(APIView):
         serializer = SingupSerializer(data=request.data)
         if serializer.is_valid():
             user = User.objects.create(email=serializer.data.get('email'),
-                                        verify_code=get_random_string(length=72),
-                                          first_name=serializer.data.get('first_name'),
-                                          last_name=serializer.data.get('last_name'))
+                                        verify_code=get_random_string(72))
+            
             user.set_password(serializer.data.get('password'))
             user.save()
             return Response({'status': 'success'}, status=status.HTTP_201_CREATED)
+        
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -52,7 +55,7 @@ class LoginAPiView(APIView):
                 token = Token.objects.filter(user=user).first()
                 response = Response()
 
-                response.set_cookie(key='token', value=token, max_age=43200, httponly=True)
+                response.set_cookie(key='token', value=token, max_age=4320, httponly=True)
                 response.data = {
                     'status': 'success',
                 }

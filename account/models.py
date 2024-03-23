@@ -86,7 +86,6 @@ class CurrencyWallet(models.Model):
 
 class IrWallet(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=30, decimal_places=0)
 
     def __str__(self):
@@ -94,6 +93,12 @@ class IrWallet(models.Model):
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_user_wallet(sender, instance=None, created=False, **kwargs):
+def create_user_currency_wallet(sender, instance=None, created=False, **kwargs):
     if created:
         CurrencyWallet.objects.create(name='btc', user=instance, price=0)
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_user_ir_wallet(sender, instance=None, created=False, **kwargs):
+    if created:
+        IrWallet.objects.create(user=instance, price=0)

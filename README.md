@@ -14,8 +14,10 @@ lets go!
 - [x] profile api
 - [x] change password api
 - [x] add basic user wallet api
-- [ ] complite user btc wallet api
-- [ ] complite user ir wallet api
+- [x] complite basic user btc wallet api
+- [x] complite basic user ir wallet api
+- [ ] complite full user btc wallet api
+- [ ] complite full user ir wallet api
 - [ ] add user exchange authentication
 - [ ] add user level
 - [ ] add btc momentary price to main page

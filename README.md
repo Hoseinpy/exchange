@@ -25,7 +25,7 @@ lets go!
 - [x] Improving basic the admin page
 - [ ] Improving full the admin page
 - [x] add more info to user model
-- [ ] create dashboard api to show user wallets
+- [x] create dashboard api to show user wallets
 - [x] add cart-bank api
 - [ ] Support api
 - [ ] convert currency to currency and currency to ir and else

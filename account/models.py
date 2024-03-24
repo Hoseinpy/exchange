@@ -53,12 +53,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_("email address"), unique=True)
     first_name = models.CharField(max_length=30, null=True)
     last_name = models.CharField(max_length=30, null=True)
+    father_name = models.CharField(max_length=30, null=True)
+    national_code = models.CharField(max_length=10, null=True)
     verify_code = models.CharField(max_length=72, null=True)
     user_level = models.CharField(max_length=4, choices=LEVEL_CHOICES, null=True, default=0)
+    authentication_image = models.ImageField(upload_to='user_info/', null=True)
+    
     is_authentication = models.BooleanField(default=False, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
+
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -102,3 +107,11 @@ def create_user_currency_wallet(sender, instance=None, created=False, **kwargs):
 def create_user_ir_wallet(sender, instance=None, created=False, **kwargs):
     if created:
         IrWallet.objects.create(user=instance, price=0)
+
+
+class CartBankModel(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    cart_number = models.CharField(max_length=16)
+
+    def __str__(self):
+        return f'{self.user.email} -- {self.cart_number}'

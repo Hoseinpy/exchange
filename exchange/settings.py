@@ -126,7 +126,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     # other settings...
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'exchange.authentication.TokenAuthSupportCookie',
+        'exchange.mine.authentication.TokenAuthSupportCookie',
     ),
 }
 

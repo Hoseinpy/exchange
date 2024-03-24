@@ -21,20 +21,17 @@ class SingupSerializer(serializers.Serializer):
         return attrs
 
 
-
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=100, required=True)
     password = serializers.CharField(max_length=50, required=True)
-
 
 
 class ForgetPasswordSerializerStep1(serializers.Serializer):
     email = serializers.EmailField(max_length=100, required=True)
 
 
-
 class ForgetPasswordSerializerStep2(serializers.Serializer):
-    password = serializers.CharField(max_length=50, required=True)
+    password = serializers.CharField(max_length=50, required=True, min_length=8)
     password2 = serializers.CharField(max_length=50, required=True)
 
     def validate(self, attrs):

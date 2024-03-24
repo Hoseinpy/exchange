@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, CurrencyWallet
+from .models import CustomUser, CurrencyWallet, CartBankModel
 
 
 class CustomUserAdmin(UserAdmin):
@@ -29,5 +29,11 @@ class CurrencyAdmin(admin.ModelAdmin):
     list_filter = ("user",)
 
 
+class CartBankAdmin(admin.ModelAdmin):
+    list_display = ("user", "cart_number")
+    list_filter = ("user",)
+
+
+admin.site.register(CartBankModel, CartBankAdmin)
 admin.site.register(CurrencyWallet, CurrencyAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)

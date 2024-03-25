@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from account.models import CurrencyWallet, IrWallet
+from apps.account.models import CurrencyWallet, IrWallet
 from .serializers import IrWalletSerializer, CurrencyWalletSerializer
 from rest_framework.permissions import IsAuthenticated
 

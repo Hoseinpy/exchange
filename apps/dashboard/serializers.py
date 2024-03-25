@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from account.models import CurrencyWallet, IrWallet
+from apps.account.models import CurrencyWallet, IrWallet
 
 
 class CurrencyWalletSerializer(serializers.ModelSerializer):

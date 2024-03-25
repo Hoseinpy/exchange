@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.utils.crypto import get_random_string
 from rest_framework.authtoken.models import Token
-from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -16,7 +15,7 @@ from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from utils.send_email import send_email
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+
 
 User = get_user_model()
 

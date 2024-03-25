@@ -49,6 +49,7 @@ LEVEL_CHOICES = {
     '3': 'level3',
 }
 
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_("email address"), unique=True)
     first_name = models.CharField(max_length=30, null=True)
@@ -57,13 +58,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     national_code = models.CharField(max_length=10, null=True)
     verify_code = models.CharField(max_length=72, null=True)
     user_level = models.CharField(max_length=4, choices=LEVEL_CHOICES, null=True, default=0)
+    phone_number = models.CharField(max_length=14, null=True)
     authentication_image = models.ImageField(upload_to='user_info/', null=True)
     
     is_authentication = models.BooleanField(default=False, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
-
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -94,7 +95,7 @@ class IrWallet(models.Model):
     price = models.DecimalField(max_digits=30, decimal_places=0)
 
     def __str__(self):
-        return self.name
+        return self.user.email
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

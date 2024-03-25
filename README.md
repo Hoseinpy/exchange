@@ -19,7 +19,9 @@ lets go!
 - [ ] complete full user btc wallet api
 - [ ] complete full user ir wallet api
 - [ ] add user exchange authentication
-- [ ] add user level
+- [x] add user level 1 system
+- [ ] add user level 2 system
+- [ ] add user level 3 system
 - [x] add btc momentary price to main page
 - [x] add command for all views
 - [x] Improving basic the admin page

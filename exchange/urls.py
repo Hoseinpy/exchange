@@ -7,10 +7,10 @@ from .mine.btc_price_api import btc_price
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('user_auth.urls')),
-    path('profile/', include('account.urls')),
-    path('v1/price/btc', btc_price, name='btc-price-api'),
-    path('', include('dashboard.urls')),
+    path('api/auth/', include('user_auth.urls')),
+    path('api/profile/', include('account.urls')),
+    path('api/v1/price/btc', btc_price, name='btc-price-api'),
+    path('api/', include('dashboard.urls')),
 ]
 
 

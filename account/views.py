@@ -63,11 +63,15 @@ class AddCartBankApi(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = CartBankModelSerializer(data=request.data)
-        if serializer.is_valid():
-            cart_number = serializer.data.get('cart_number')
-            cart = CartBankModel(user=request.user, cart_number=cart_number)
-            cart.save()
-            return Response({'status': 'success'}, status.HTTP_201_CREATED)
+        user = request.user
+        if user.user_level > '0':
+            serializer = CartBankModelSerializer(data=request.data)
+            if serializer.is_valid():
+                cart_number = serializer.data.get('cart_number')
+                cart = CartBankModel(user=request.user, cart_number=cart_number)
+                cart.save()
+                return Response({'status': 'success'}, status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+        return Response({'status': 'you need to level 1 for add cart'}, status.HTTP_510_NOT_EXTENDED)

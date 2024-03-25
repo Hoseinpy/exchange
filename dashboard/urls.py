@@ -3,6 +3,6 @@ from .views import CurrencyWalletView, IrWalletView
 
 
 urlpatterns = [
-    path('', IrWalletView.as_view(), name='real-pending'),
-    path('currency/',CurrencyWalletView.as_view(), name='currency-pending')
+    path('real-wallet/', IrWalletView.as_view(), name='real-wallet-api'),
+    path('currency-wallet/',CurrencyWalletView.as_view(), name='currency-wallet-api')
 ]

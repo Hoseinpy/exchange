@@ -9,18 +9,16 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from .serializers import( SingupSerializer, LoginSerializer,
                           ForgetPasswordSerializerStep1,
-                          ForgetPasswordSerializerStep2,)
+                          ForgetPasswordSerializerStep2,
+                          UserLevel1Serializer,)
 from django.contrib.auth import authenticate
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from utils.send_email import send_email
-from django.contrib.auth.password_validation import validate_password
-
-
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 User = get_user_model()
-
 
 
 @method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
@@ -122,3 +120,29 @@ class ForgetPasswordVerifyAPIView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'status': 'verify code is not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
+class UserLeve1ApiView(APIView):
+    """
+    user send f_name, l_name, father_name and national_code to up level user for 1
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = UserLevel1Serializer(data=request.data)
+        if serializer.is_valid():
+            user = User.objects.filter(email=request.user.email).first()
+            if user.first_name and user.last_name and user.father_name and user.national_code and user.phone_number:
+                return Response({'status': 'you already in level 1'}, status=status.HTTP_208_ALREADY_REPORTED)
+            else:
+                user.phone_number = '+98'+serializer.data.get('phone_number')
+                user.first_name = serializer.data.get('first_name')
+                user.last_name = serializer.data.get('last_name')
+                user.father_name = serializer.data.get('father_name')
+                user.national_code = serializer.data.get('national_code')
+                user.user_level = 1
+                user.save()
+                return Response({'status': 'success'}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

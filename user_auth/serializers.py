@@ -40,3 +40,11 @@ class ForgetPasswordSerializerStep2(serializers.Serializer):
             raise serializers.ValidationError('password is not match', status.HTTP_400_BAD_REQUEST)
 
         return attrs
+
+
+class UserLevel1Serializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=10, required=True, min_length=10)
+    first_name = serializers.CharField(max_length=30, required=True)
+    last_name = serializers.CharField(max_length=30, required=True)
+    father_name = serializers.CharField(max_length=30, required=True)
+    national_code = serializers.CharField(max_length=10, required=True, min_length=10)

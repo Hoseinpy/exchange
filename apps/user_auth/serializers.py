@@ -1,6 +1,7 @@
-from rest_framework import serializers
+from rest_framework import serializers, fields
 from django.contrib.auth import get_user_model
 from rest_framework import status
+from drf_extra_fields.fields import Base64ImageField
 
 User = get_user_model()
 
@@ -43,8 +44,12 @@ class ForgetPasswordSerializerStep2(serializers.Serializer):
 
 
 class UserLevel1Serializer(serializers.Serializer):
-    phone_number = serializers.CharField(max_length=10, required=True, min_length=10)
+    phone_number = serializers.CharField(max_length=11, required=True, min_length=10)
     first_name = serializers.CharField(max_length=30, required=True)
     last_name = serializers.CharField(max_length=30, required=True)
     father_name = serializers.CharField(max_length=30, required=True)
     national_code = serializers.CharField(max_length=10, required=True, min_length=10)
+
+
+class UserLevel2Serializer(serializers.Serializer):
+    image = serializers.ImageField(required=True)

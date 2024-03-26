@@ -1,15 +1,18 @@
+import requests.utils
 from django.shortcuts import render
 from django.utils.crypto import get_random_string
 from rest_framework.authtoken.models import Token
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from .serializers import( SingupSerializer, LoginSerializer,
                           ForgetPasswordSerializerStep1,
                           ForgetPasswordSerializerStep2,
-                          UserLevel1Serializer,)
+                          UserLevel1Serializer,
+                          UserLevel2Serializer)
 from django.contrib.auth import authenticate
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
@@ -102,7 +105,7 @@ class ForgetPasswordVerifyAPIView(APIView):
         user = User.objects.filter(verify_code=verify_code).first()
         if user is not None:
             return Response({'status': 'you can change password'}, status=status.HTTP_200_OK)
-        return render(request, 'user_auth/404.html') # is render template for developer mode
+        return render(request, 'user_auth/404.html') # the render template for developer mode
 
     def post(self, request, verify_code):
         user = User.objects.filter(verify_code=verify_code).first()
@@ -122,7 +125,7 @@ class ForgetPasswordVerifyAPIView(APIView):
 
 
 @method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
-class UserLeve1ApiView(APIView):
+class UserLevel1ApiView(APIView):
     """
     user send f_name, l_name, father_name and national_code to up level user for 1
     """
@@ -145,3 +148,33 @@ class UserLeve1ApiView(APIView):
                 return Response({'status': 'success'}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
+class UserLevel2ApiView(APIView):
+    """
+    user send authentication image to up level user for 2
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = UserLevel2Serializer(data=request.data)
+        if serializer.is_valid():
+            user = User.objects.filter(email=request.user.email).first()
+            if user.user_level == '1':
+                """
+                if user is level 1 can go level 2
+                """
+                if user.authentication_image and user.is_authentication:
+                    return Response({'status': 'you already in level 2'}, status=status.HTTP_208_ALREADY_REPORTED)
+                else:
+                    user.authentication_image = request.data.get('image')
+                    user.is_authentication = True
+                    user.user_level = 2
+                    user.save()
+                    return Response({'status': 'success'}, status=status.HTTP_200_OK)
+
+            return Response({'status': 'you need to complete level 1 to go level 2'}, status.HTTP_510_NOT_EXTENDED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

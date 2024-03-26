@@ -16,7 +16,7 @@ User = get_user_model()
 @method_decorator([csrf_exempt, ratelimit(key='ip', rate='50/m')], name='dispatch')
 class ProfileApiView(APIView):
     """
-    this api for show user profile
+    show all info about user
     """
     permission_classes = [IsAuthenticated]
     
@@ -27,10 +27,10 @@ class ProfileApiView(APIView):
         return Response(serializer.data, status.HTTP_200_OK)
     
 
-@method_decorator([csrf_exempt, ratelimit(key='ip', rate='10/m')], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
 class ChangePassword(APIView):
     """
-    this is for change password api
+    this for change password api
     """
     permission_classes = [IsAuthenticated]
     
@@ -51,6 +51,9 @@ class ChangePassword(APIView):
 
 
 class UserCartBankListAPi(APIView):
+    """
+    show all user bank cart
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -60,6 +63,9 @@ class UserCartBankListAPi(APIView):
 
 
 class AddCartBankApi(APIView):
+    """
+    add cart bank if user is level 1 or gt
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -74,4 +80,4 @@ class AddCartBankApi(APIView):
 
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-        return Response({'status': 'you need to level 1 for add cart'}, status.HTTP_510_NOT_EXTENDED)
+        return Response({'status': 'you need to complete level 1 for add cart'}, status.HTTP_510_NOT_EXTENDED)

@@ -10,7 +10,7 @@ urlpatterns = [
     path('api/auth/', include('apps.user_auth.urls')),
     path('api/profile/', include('apps.account.urls')),
     path('api/v1/price/btc', btc_price, name='btc-price-api'),
-    path('api/', include('apps.dashboard.urls')),
+    path('api/dashboard/', include('apps.dashboard.urls')),
 ]
 
 

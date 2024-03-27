@@ -177,4 +177,3 @@ class UserLevel2ApiView(APIView):
             return Response({'status': 'you need to complete level 1 to go level 2'}, status.HTTP_510_NOT_EXTENDED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

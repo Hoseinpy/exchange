@@ -16,6 +16,7 @@ lets go!
 - [x] add user level 2 system
 - [ ] add user level 3 system
 - [x] add more info to user model
+- [x] if phone number and national_code is exists in db show error for user
 ---
 - [x] create dashboard api to show user wallets
 - [x] complete basic user btc wallet api
@@ -32,7 +33,9 @@ lets go!
 ---
 - [x] Improving basic the admin page
 - [x] Improving full the admin page
-- [ ] Support api
+- [x] Support api
+- [ ] admin can change ticket status
+- [ ] add put option for TicketAnswerAPIView view
 - [ ] add admin system for if user add new cart-bank, buy, sell, up user level admin reject or accept it
 ---
 - [ ] add encrypt to project

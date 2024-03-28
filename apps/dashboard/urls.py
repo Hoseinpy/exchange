@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (CurrencyWalletView, IrWalletView, TicketListForAdminApiView,
-                    TicketListForOwnerApiView, TicketAddApiView, TicketDetailApiView,)
+                    TicketListForOwnerApiView, TicketAddApiView, TicketDetailApiView,
+                    TicketAnswerAPIView)
 
 
 urlpatterns = [
@@ -9,5 +10,6 @@ urlpatterns = [
     path('tickets/', TicketListForAdminApiView.as_view(), name='Ticket-list-for-admin-api'),
     path('user-ticket/', TicketListForOwnerApiView.as_view(), name='Ticket-list-for-owner-api'),
     path('user-ticket/add', TicketAddApiView.as_view(), name='Ticket-add-api'),
-    path('user-ticket/<int:pk>', TicketDetailApiView.as_view(), name='Ticket-detail-api'),
+    path('user-ticket/<str:uuid>', TicketDetailApiView.as_view(), name='Ticket-detail-for-user-api'),
+    path('tickets/<str:uuid>', TicketAnswerAPIView.as_view(), name='Ticket-detail-for-admin-api'),
 ]

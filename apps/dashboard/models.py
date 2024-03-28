@@ -1,12 +1,14 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+import uuid
 
 
 User = get_user_model()
 
 
 STATUS_CHOICES = {
-    'new': 'New',
+    'pending': 'Pending',
+    'open': 'Open',
     'closed': 'Closed'
 }
 
@@ -16,10 +18,11 @@ class Ticket(models.Model):
     description = models.TextField(max_length=600)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.CharField(max_length=6, choices=STATUS_CHOICES, null=True)
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, null=True)
+    uuid = models.CharField(max_length=8, default=str(uuid.uuid4())[:8], editable=False)
 
     def __str__(self):
-        return self.title
+        return f'{self.title} - {self.user}'
 
 
 class TicketAnswer(models.Model):
@@ -28,4 +31,4 @@ class TicketAnswer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.ticket
+        return f'{self.ticket}'

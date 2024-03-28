@@ -17,14 +17,43 @@ class IrWalletSerializer(serializers.ModelSerializer):
 
 
 class TicketAnswerSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
     class Meta:
         model = TicketAnswer
-        fields = ['ticket', 'answer', 'created_at']
+        fields = ['user', 'answer', 'created_at']
+
+    def get_user(self, obj):
+        try:
+            return obj.user.first_name + ' ' + obj.user.last_name
+        except:
+            return obj.user
 
 
-class TicketSerializer(serializers.ModelSerializer):
-    answers = TicketAnswerSerializer(read_only=True, many=True)
+class TicketListSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = Ticket
-        fields = ['id', 'title', 'description', 'created_at', 'status', 'answers']
+        fields = ['user', 'title', 'status', 'created_at']
+
+    def get_user(self, obj):
+        try:
+            return obj.user.first_name + ' ' + obj.user.last_name
+        except:
+            return obj.user.email
+
+
+class TicketDetailSerializer(serializers.ModelSerializer):
+    answers = TicketAnswerSerializer(read_only=True, many=True)
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Ticket
+        fields = ['user', 'title', 'description', 'created_at', 'status', 'answers']
+
+    def get_user(self, obj):
+        try:
+            return obj.user.first_name + ' ' + obj.user.last_name
+        except:
+            return obj.user.email

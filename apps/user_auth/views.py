@@ -138,14 +138,17 @@ class UserLevel1ApiView(APIView):
             if user.first_name and user.last_name and user.father_name and user.national_code and user.phone_number:
                 return Response({'status': 'you already in level 1'}, status=status.HTTP_208_ALREADY_REPORTED)
             else:
-                user.phone_number = '+98'+serializer.data.get('phone_number')
-                user.first_name = serializer.data.get('first_name')
-                user.last_name = serializer.data.get('last_name')
-                user.father_name = serializer.data.get('father_name')
-                user.national_code = serializer.data.get('national_code')
-                user.user_level = 1
-                user.save()
-                return Response({'status': 'success'}, status=status.HTTP_200_OK)
+                if User.objects.filter(phone_number=serializer.data.get('phone_number'), national_code=serializer.data.get('national_code')).exists():
+                    return Response({'status': 'phone_number or national_code is already registered'}, status=status.HTTP_208_ALREADY_REPORTED)
+                else:
+                    user.phone_number = serializer.data.get('phone_number')
+                    user.first_name = serializer.data.get('first_name')
+                    user.last_name = serializer.data.get('last_name')
+                    user.father_name = serializer.data.get('father_name')
+                    user.national_code = serializer.data.get('national_code')
+                    user.user_level = 1
+                    user.save()
+                    return Response({'status': 'success'}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

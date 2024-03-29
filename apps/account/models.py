@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from rest_framework.authtoken.models import Token
 from django.conf import settings
+import uuid
 
 
 class CustomUserManager(BaseUserManager):
@@ -86,6 +87,7 @@ class CurrencyWallet(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=30, decimal_places=2)
+    code = models.CharField(max_length=16, null=True)
 
     def __str__(self):
         return self.name
@@ -94,11 +96,11 @@ class CurrencyWallet(models.Model):
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_user_currency_wallet(sender, instance=None, created=False, **kwargs):
     if created:
-        CurrencyWallet.objects.create(user=instance, name='btc', price=0)
-        CurrencyWallet.objects.create(user=instance, name='eth', price=0)
-        CurrencyWallet.objects.create(user=instance, name='bnb', price=0) 
-        CurrencyWallet.objects.create(user=instance, name='tether', price=0)
-        CurrencyWallet.objects.create(user=instance, name='trx', price=0)
+        CurrencyWallet.objects.create(user=instance, name='btc', price=0, code=str(uuid.uuid4())[:16])
+        CurrencyWallet.objects.create(user=instance, name='eth', price=0, code=str(uuid.uuid4())[:16])
+        CurrencyWallet.objects.create(user=instance, name='bnb', price=0, code=str(uuid.uuid4())[:16]) 
+        CurrencyWallet.objects.create(user=instance, name='tether', price=0, code=str(uuid.uuid4())[:16])
+        CurrencyWallet.objects.create(user=instance, name='trx', price=0, code=str(uuid.uuid4())[:16])
 
 
 class CartBankModel(models.Model):

@@ -60,7 +60,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     user_level = models.CharField(max_length=4, choices=LEVEL_CHOICES, null=True, default=0)
     phone_number = models.CharField(max_length=14, null=True)
     authentication_image = models.ImageField(upload_to='user_info/', null=True)
-    
+    balance = models.DecimalField(max_digits=30, decimal_places=0, default=0)
+
     is_authentication = models.BooleanField(default=False, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -82,7 +83,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 
 class CurrencyWallet(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=30, decimal_places=2)
 
@@ -90,24 +91,14 @@ class CurrencyWallet(models.Model):
         return self.name
 
 
-class IrWallet(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True)
-    price = models.DecimalField(max_digits=30, decimal_places=0)
-
-    def __str__(self):
-        return self.user.email
-
-
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_user_currency_wallet(sender, instance=None, created=False, **kwargs):
     if created:
-        CurrencyWallet.objects.create(name='btc', user=instance, price=0)
-
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_user_ir_wallet(sender, instance=None, created=False, **kwargs):
-    if created:
-        IrWallet.objects.create(user=instance, price=0)
+        CurrencyWallet.objects.create(user=instance, name='btc', price=0)
+        CurrencyWallet.objects.create(user=instance, name='eth', price=0)
+        CurrencyWallet.objects.create(user=instance, name='bnb', price=0) 
+        CurrencyWallet.objects.create(user=instance, name='tether', price=0)
+        CurrencyWallet.objects.create(user=instance, name='trx', price=0)
 
 
 class CartBankModel(models.Model):

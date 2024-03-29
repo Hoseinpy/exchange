@@ -26,7 +26,7 @@ User = get_user_model()
 @method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
 class SingupApiView(APIView):
     """
-    send email and password for create account for user
+    send email and password for create account to user
     """
     def post(self, request):
         serializer = SingupSerializer(data=request.data)

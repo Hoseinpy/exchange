@@ -1,7 +1,11 @@
 from rest_framework import serializers
 
-from apps.account.models import CurrencyWallet, IrWallet
+from apps.account.models import CurrencyWallet
 from .models import Ticket, TicketAnswer
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class CurrencyWalletSerializer(serializers.ModelSerializer):
@@ -12,8 +16,8 @@ class CurrencyWalletSerializer(serializers.ModelSerializer):
 
 class IrWalletSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IrWallet
-        fields = ['price']
+        model = User
+        fields = ['balance']
 
 
 class TicketAnswerSerializer(serializers.ModelSerializer):

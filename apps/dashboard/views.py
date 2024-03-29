@@ -2,7 +2,7 @@ from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.views import APIView
-from apps.account.models import CurrencyWallet, IrWallet
+from apps.account.models import CurrencyWallet
 from .models import Ticket, TicketAnswer
 from .permission import IsOwnerOrAdmin
 from .serializers import IrWalletSerializer, CurrencyWalletSerializer, TicketListSerializer, TicketDetailSerializer, \
@@ -18,7 +18,7 @@ class IrWalletView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        wallets = IrWallet.objects.filter(user=request.user).first()
+        wallets = User.objects.filter(email=request.user.email).first()
         serializer = IrWalletSerializer(wallets)
         return Response(serializer.data, status.HTTP_200_OK)
 
@@ -27,8 +27,8 @@ class CurrencyWalletView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        wallets = CurrencyWallet.objects.filter(user=request.user).first()
-        serializer = CurrencyWalletSerializer(wallets)
+        wallets = CurrencyWallet.objects.filter(user=request.user)
+        serializer = CurrencyWalletSerializer(wallets, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
 
 

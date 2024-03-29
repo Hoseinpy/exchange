@@ -63,7 +63,7 @@ class LoginAPiView(APIView):
             else:
                 return Response({'status': 'incorrect email or password'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            return Response({'status': 'bad request'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @method_decorator([csrf_exempt, ratelimit(key='ip', rate='4/m')], name='dispatch')

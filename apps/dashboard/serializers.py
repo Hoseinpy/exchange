@@ -17,17 +17,10 @@ class IrWalletSerializer(serializers.ModelSerializer):
 
 
 class TicketAnswerSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
 
     class Meta:
         model = TicketAnswer
-        fields = ['user', 'answer', 'created_at']
-
-    def get_user(self, obj):
-        try:
-            return obj.user.first_name + ' ' + obj.user.last_name
-        except:
-            return obj.user
+        fields = ['answer', 'created_at']
 
 
 class TicketListSerializer(serializers.ModelSerializer):
@@ -57,3 +50,9 @@ class TicketDetailSerializer(serializers.ModelSerializer):
             return obj.user.first_name + ' ' + obj.user.last_name
         except:
             return obj.user.email
+
+
+class AdminChangeTicketStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ['status']

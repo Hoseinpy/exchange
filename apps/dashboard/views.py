@@ -5,7 +5,8 @@ from rest_framework.views import APIView
 from apps.account.models import CurrencyWallet, IrWallet
 from .models import Ticket, TicketAnswer
 from .permission import IsOwnerOrAdmin
-from .serializers import IrWalletSerializer, CurrencyWalletSerializer, TicketListSerializer, TicketDetailSerializer, TicketAnswerSerializer
+from .serializers import IrWalletSerializer, CurrencyWalletSerializer, TicketListSerializer, TicketDetailSerializer, \
+    TicketAnswerSerializer, AdminChangeTicketStatusSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth import get_user_model
 
@@ -64,7 +65,16 @@ class TicketAnswerAPIView(APIView):
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-    # todo: add put
+    def put(self, request, uuid):
+        ticket = self.current_ticket(uuid)
+        serializer = AdminChangeTicketStatusSerializer(ticket, data=request.data)
+        if serializer.is_valid():
+            change_status = serializer.validated_data.get('status')
+            ticket.status = change_status
+            serializer.save()
+            return Response({'status': 'success'}, status.HTTP_200_OK)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
 
 class TicketListForOwnerApiView(APIView):

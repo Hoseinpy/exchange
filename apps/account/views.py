@@ -13,7 +13,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-@method_decorator([csrf_exempt, ratelimit(key='ip', rate='50/m')], name='dispatch')
 class ProfileApiView(APIView):
     """
     show all info about user

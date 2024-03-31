@@ -180,3 +180,14 @@ class UserLevel2ApiView(APIView):
             return Response({'status': 'you need to complete level 1 to go level 2'}, status.HTTP_510_NOT_EXTENDED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
+class UserLevel3APiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    """
+    if user total buy is 1500$ user can go level 3
+    """
+    def post(self, request):
+        pass

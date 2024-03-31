@@ -21,8 +21,8 @@ lets go!
 - [x] create dashboard api to show user wallets
 - [x] complete basic user btc wallet api
 - [x] complete basic user ir wallet api
-- [ ] complete full user btc wallet api
-- [ ] complete full user ir wallet api
+- [x] complete full user currency wallet api
+- [x] complete full user ir wallet api
 - [x] add btc momentary price to main page
 - [x] add more currency wallet
 - [ ] Write better currency wallet or change currency wallet system

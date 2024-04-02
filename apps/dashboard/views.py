@@ -6,9 +6,10 @@ from apps.account.models import CurrencyWallet
 from .models import Ticket, TicketAnswer
 from .permission import IsOwnerOrAdmin
 from .serializers import IrWalletSerializer, CurrencyWalletSerializer, TicketListSerializer, TicketDetailSerializer, \
-    TicketAnswerSerializer, AdminChangeTicketStatusSerializer
+    TicketAnswerSerializer, AdminChangeTicketStatusSerializer, ConvertSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth import get_user_model
+import requests
 
 
 User = get_user_model()
@@ -103,4 +104,3 @@ class TicketAddApiView(APIView):
             return Response({'statsu': 'success'}, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

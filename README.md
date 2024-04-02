@@ -41,3 +41,4 @@ lets go!
 ---
 - [ ] Increase site security
 - [x] add command for all views
+- [ ] add reCaptcha

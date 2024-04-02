@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     # package
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_recaptcha',
 
     # apps
     'apps.user_auth',
@@ -137,3 +138,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'hoosinkhalili66@gmail.com'
 EMAIL_HOST_PASSWORD = 'kygeeayehxsrivxg'
 EMAIL_PORT = 587
+
+
+# google recaptcha secret key
+DRF_RECAPTCHA_SECRET_KEY = '6LcloqwpAAAAAEJcKm7b9q_k6xY5OrWsgo1KJt3y'

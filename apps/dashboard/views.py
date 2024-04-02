@@ -6,10 +6,9 @@ from apps.account.models import CurrencyWallet
 from .models import Ticket, TicketAnswer
 from .permission import IsOwnerOrAdmin
 from .serializers import IrWalletSerializer, CurrencyWalletSerializer, TicketListSerializer, TicketDetailSerializer, \
-    TicketAnswerSerializer, AdminChangeTicketStatusSerializer, ConvertSerializer
+    TicketAnswerSerializer, AdminChangeTicketStatusSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth import get_user_model
-import requests
 
 
 User = get_user_model()

@@ -2,7 +2,6 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, ChangePasswordSerializer, CartBankModelSerializer
 from .models import CartBankModel
-from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
@@ -26,7 +25,7 @@ class ProfileApiView(APIView):
         return Response(serializer.data, status.HTTP_200_OK)
     
 
-@method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
+@method_decorator([csrf_exempt], name='dispatch')
 class ChangePassword(APIView):
     """
     this for change password api

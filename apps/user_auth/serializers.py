@@ -1,15 +1,23 @@
 from rest_framework import serializers, fields
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from drf_extra_fields.fields import Base64ImageField
+from django_recaptcha.fields import ReCaptchaField # i dont know is work or not
+
 
 User = get_user_model()
+
+
+class ReCaptchaSerializer(ReCaptchaField):  # i dont know is work or not
+    default_error_messages = {
+        "invalid-input-response": "reCAPTCHA token is invalid.",
+    }
 
 
 class SingupSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=100, required=True)
     password = serializers.CharField(max_length=50, required=True, min_length=8)
     password2 = serializers.CharField(max_length=50, required=True)
+    captcha = ReCaptchaSerializer()  # i dont know is work or not
 
     def validate(self, attrs):
 
@@ -25,15 +33,18 @@ class SingupSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=100, required=True)
     password = serializers.CharField(max_length=50, required=True)
+    captcha = ReCaptchaSerializer()  # i dont know is work or not
 
 
 class ForgetPasswordSerializerStep1(serializers.Serializer):
     email = serializers.EmailField(max_length=100, required=True)
+    captcha = ReCaptchaSerializer()  # i dont know is work or not
 
 
 class ForgetPasswordSerializerStep2(serializers.Serializer):
     password = serializers.CharField(max_length=50, required=True, min_length=8)
     password2 = serializers.CharField(max_length=50, required=True)
+    captcha = ReCaptchaSerializer()  # i dont know is work or not
 
     def validate(self, attrs):
 

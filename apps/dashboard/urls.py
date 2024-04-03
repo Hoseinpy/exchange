@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import (CurrencyWalletView, IrWalletView, TicketListForAdminApiView,
+from .views import (IrWalletView, TicketListForAdminApiView,
                     TicketListForOwnerApiView, TicketAddApiView, TicketDetailApiView,
-                    TicketAnswerAPIView)
+                    TicketAnswerAPIView, CurrencyWalletView)
 
 
 urlpatterns = [

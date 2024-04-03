@@ -25,7 +25,7 @@ lets go!
 - [x] complete full user ir wallet api
 - [x] add btc momentary price to main page
 - [x] add more currency wallet
-- [ ] Write better currency wallet or change currency wallet system
+- [x] Write better currency wallet or change currency wallet system
 - [ ] convert currency to currency and currency to ir and else
 ---
 - [x] profile api
@@ -41,4 +41,4 @@ lets go!
 ---
 - [ ] Increase site security
 - [x] add command for all views
-- [ ] add reCaptcha
+- [x] add reCaptcha # maybe work or not work

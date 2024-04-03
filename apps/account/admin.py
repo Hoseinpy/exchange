@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, CurrencyWallet, CartBankModel
+from .models import CustomUser, CurrencyWallet, CartBankModel, Currency
 
 
 @admin.register(CustomUser)
@@ -27,7 +27,7 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(CurrencyWallet)
 class CurrencyWalletAdmin(admin.ModelAdmin):
-    list_display = ("user", "name", "price",)
+    list_display = ("user", "currency", "price", 'code',)
     list_filter = ("user",)
 
 
@@ -35,3 +35,9 @@ class CurrencyWalletAdmin(admin.ModelAdmin):
 class CartBankAdmin(admin.ModelAdmin):
     list_display = ("user", "cart_number")
     list_filter = ("user",)
+
+
+@admin.register(Currency)
+class CurrencyAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    list_filter = ("name",)

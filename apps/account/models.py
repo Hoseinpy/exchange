@@ -43,22 +43,20 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-LEVEL_CHOICES = {
-    '0': 'level0',
-    '1': 'level1',
-    '2': 'level2',
-    '3': 'level3',
-}
-
-
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    class LevelChoice(models.TextChoices):
+        level0 = 'Level0'
+        level1 = 'Level1'
+        level2 = 'Level2'
+        level3 = 'Level3'
+
     email = models.EmailField(_("email address"), unique=True)
     first_name = models.CharField(max_length=30, null=True)
     last_name = models.CharField(max_length=30, null=True)
     father_name = models.CharField(max_length=30, null=True)
     national_code = models.CharField(max_length=10, null=True)
     verify_code = models.CharField(max_length=72, null=True)
-    user_level = models.CharField(max_length=4, choices=LEVEL_CHOICES, null=True, default=0)
+    user_level = models.CharField(max_length=6, choices=LevelChoice.choices, null=True, default=0)
     phone_number = models.CharField(max_length=14, null=True)
     authentication_image = models.ImageField(upload_to='user_info/', null=True)
     balance = models.DecimalField(max_digits=30, decimal_places=0, default=0)
@@ -85,9 +83,16 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class CurrencyWallet(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=20)
-    price = models.DecimalField(max_digits=30, decimal_places=2)
+    price = models.DecimalField(max_digits=30, decimal_places=2, null=True)
     code = models.CharField(max_length=16, null=True)
+    currency = models.ForeignKey('Currency', on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return f'{self.currency} -- {self.user}'
+
+
+class Currency(models.Model):
+    name = models.CharField(max_length=10, null=True)
 
     def __str__(self):
         return self.name
@@ -96,11 +101,9 @@ class CurrencyWallet(models.Model):
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_user_currency_wallet(sender, instance=None, created=False, **kwargs):
     if created:
-        CurrencyWallet.objects.create(user=instance, name='btc', price=0, code=str(uuid.uuid4())[:16])
-        CurrencyWallet.objects.create(user=instance, name='eth', price=0, code=str(uuid.uuid4())[:16])
-        CurrencyWallet.objects.create(user=instance, name='bnb', price=0, code=str(uuid.uuid4())[:16]) 
-        CurrencyWallet.objects.create(user=instance, name='tether', price=0, code=str(uuid.uuid4())[:16])
-        CurrencyWallet.objects.create(user=instance, name='trx', price=0, code=str(uuid.uuid4())[:16])
+        c = Currency.objects.all()
+        for i in c:
+            CurrencyWallet.objects.create(user=instance, currency=i, price=0, code=str(uuid.uuid4())[:16])
 
 
 class CartBankModel(models.Model):

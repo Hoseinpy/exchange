@@ -9,9 +9,18 @@ User = get_user_model()
 
 
 class CurrencyWalletSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    currency = serializers.SerializerMethodField()
+
     class Meta:
         model = CurrencyWallet
-        fields = ['name', 'price']
+        fields = ['user', 'currency', 'price', 'code']
+
+    def get_user(self, obj):
+        return str(obj.user)
+
+    def get_currency(self, obj):
+        return str(obj.currency)
 
 
 class IrWalletSerializer(serializers.ModelSerializer):

@@ -15,12 +15,13 @@ from django.contrib.auth import authenticate
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from utils.send_email import send_email
+from django_ratelimit.decorators import ratelimit
 
 
 User = get_user_model()
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
 class SingupApiView(APIView):
     """
     send email and password for create account to user
@@ -39,7 +40,7 @@ class SingupApiView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
 class LoginAPiView(APIView):
     """
     send email and password for login to account user
@@ -63,7 +64,7 @@ class LoginAPiView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='3/m')], name='dispatch')
 class LogoutAPiView(APIView):
     """
     send request for logout user
@@ -77,7 +78,7 @@ class LogoutAPiView(APIView):
         return response
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
 class ForgetPasswordApiView(APIView):
     """
     Catch user email and send forget password email
@@ -93,7 +94,7 @@ class ForgetPasswordApiView(APIView):
                 return Response({'status': 'email not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='2/m')], name='dispatch')
 class ForgetPasswordVerifyAPIView(APIView):
     """
     if user verify code is rigth, user can change password
@@ -121,7 +122,7 @@ class ForgetPasswordVerifyAPIView(APIView):
         return Response({'status': 'verify code is not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='10/m')], name='dispatch')
 class UserLevel1ApiView(APIView):
     """
     user send f_name, l_name, father_name and national_code to up level user for 1
@@ -150,7 +151,7 @@ class UserLevel1ApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='10/m')], name='dispatch')
 class UserLevel2ApiView(APIView):
     """
     user send authentication image to up level user for 2
@@ -179,7 +180,7 @@ class UserLevel2ApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator([csrf_exempt], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='10/m')], name='dispatch')
 class UserLevel3APiView(APIView):
     permission_classes = [IsAuthenticated]
 

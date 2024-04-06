@@ -32,3 +32,19 @@ class CartBankModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartBankModel
         fields = ['cart_number']
+
+
+
+class AllCartBankSeralizer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CartBankModel
+        fields = ['user', 'cart_number', 'created_at']
+
+    def get_user(self, obj):
+        return f'{obj.user.first_name} {obj.user.last_name}'
+    
+
+class RejectOrAcceptSeralizer(serializers.Serializer):
+    admin_choice = serializers.CharField(max_length=6, min_length=6, required=True)

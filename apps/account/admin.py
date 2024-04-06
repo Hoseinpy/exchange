@@ -33,8 +33,8 @@ class CurrencyWalletAdmin(admin.ModelAdmin):
 
 @admin.register(CartBankModel)
 class CartBankAdmin(admin.ModelAdmin):
-    list_display = ("user", "cart_number")
-    list_filter = ("user",)
+    list_display = ("user", "cart_number", "is_accepted", "uuid")
+    list_filter = ("user", "is_accepted")
 
 
 @admin.register(Currency)

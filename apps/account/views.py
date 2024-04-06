@@ -1,12 +1,15 @@
+from django.http import Http404
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, ChangePasswordSerializer, CartBankModelSerializer
+from .serializers import (AllCartBankSeralizer, UserSerializer, ChangePasswordSerializer,
+                           CartBankModelSerializer, RejectOrAcceptSeralizer)
 from .models import CartBankModel
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from rest_framework.permissions import IsAdminUser
 
 
 User = get_user_model()
@@ -55,7 +58,7 @@ class UserCartBankListAPi(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        cart_bank = CartBankModel.objects.filter(user=request.user)
+        cart_bank = CartBankModel.objects.filter(user=request.user).filter(is_accepted=True)
         serializer = CartBankModelSerializer(cart_bank, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
 
@@ -68,14 +71,61 @@ class AddCartBankApi(APIView):
 
     def post(self, request):
         user = request.user
-        if user.user_level > '0':
+        if user.user_level > 'level0':
             serializer = CartBankModelSerializer(data=request.data)
             if serializer.is_valid():
                 cart_number = serializer.data.get('cart_number')
                 cart = CartBankModel(user=request.user, cart_number=cart_number)
                 cart.save()
-                return Response({'status': 'success'}, status.HTTP_201_CREATED)
+                return Response({'status': 'Success, the admin accepts or rejects'}, status.HTTP_201_CREATED)
 
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-        return Response({'status': 'you need to complete level 1 for add cart'}, status.HTTP_510_NOT_EXTENDED)
+        return Response({'status': 'you need to complete level 1 for add cart'}, status.HTTP_406_NOT_ACCEPTABLE)
+    
+
+class AsAllCartBank(generics.ListAPIView):
+    """
+    show all is_accepted=False in CartBank model for admin
+    """
+    serializer_class = AllCartBankSeralizer
+    queryset = CartBankModel.objects.filter(is_accepted=False).order_by('-created_at')
+    permission_classes = [IsAdminUser]
+
+
+class AsDetailCartBank(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get_cart_bank(self, uuid):
+        cart = CartBankModel.objects.filter(uuid__iexact=uuid).first()
+        if cart:
+            return cart
+        else:
+            raise Http404()
+
+    def get(self, request, uuid):
+        cart = self.get_cart_bank(uuid)
+        serializer = AllCartBankSeralizer(cart)
+        return Response(serializer.data, status.HTTP_200_OK)
+    
+    def post(self, request, uuid):
+        serializer = RejectOrAcceptSeralizer(data=request.data)
+        if serializer.is_valid():
+            admin_choice = serializer.data.get('admin_choice')
+            cart = self.get_cart_bank(uuid)
+            
+            if admin_choice == 'accept':
+                cart.is_accepted = True
+                cart.save()
+                return Response({'status': 'ok'}, status.HTTP_200_OK)
+            
+            elif admin_choice == 'reject':
+
+                # TODO: Ability to add text to reject the request in AS
+
+                return Response({'status': 'ok'}, status.HTTP_200_OK)
+            
+            else:
+                return Response({'status': 'choice is not valid'}, status.HTTP_406_NOT_ACCEPTABLE)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

@@ -37,7 +37,10 @@ lets go!
 - [x] Support api
 - [x] admin can change ticket status
 - [x] add put option for TicketAnswerAPIView view
-- [ ] add admin system for if user add new cart-bank, buy, sell, up user level admin reject or accept it
+- [x] add admin system for if user add new cart-bank, up user level admin reject or accept it (AS)
+- [ ] complite level 2 AS
+- [ ] Once the user has sent level 1 and 2 information, she/he cannot send again until her request is rejected
+- [ ] Ability to add text to reject the request in AS
 ---
 - [ ] Increase site security
 - [x] add command for all views

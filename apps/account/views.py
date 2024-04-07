@@ -69,19 +69,22 @@ class AddCartBankApi(APIView):
     """
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def post(self, request): # !!
         user = request.user
-        if user.user_level > 'level0':
+        if user.user_level > 'Level0':
             serializer = CartBankModelSerializer(data=request.data)
             if serializer.is_valid():
                 cart_number = serializer.data.get('cart_number')
+                if CartBankModel.objects.filter(user=user).filter(cart_number=cart_number).exists():
+                    return Response({'status': 'this cart-number is already exists'}, status.HTTP_302_FOUND)
+                
                 cart = CartBankModel(user=request.user, cart_number=cart_number)
                 cart.save()
-                return Response({'status': 'Success, the admin accepts or rejects'}, status.HTTP_201_CREATED)
+                return Response({'status': 'Success, the admin accepts or rejects'}, status.HTTP_201_CREATED) # TODO: in status message add 'You will be notified by email'
 
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-        return Response({'status': 'you need to complete level 1 for add cart'}, status.HTTP_406_NOT_ACCEPTABLE)
+        return Response({'status': 'you need to complete level 1 for add cart-bank'}, status.HTTP_406_NOT_ACCEPTABLE)
     
 
 class AsAllCartBank(generics.ListAPIView):
@@ -122,7 +125,7 @@ class AsDetailCartBank(APIView):
             elif admin_choice == 'reject':
 
                 # TODO: Ability to add text to reject the request in AS
-
+                cart.delete()
                 return Response({'status': 'ok'}, status.HTTP_200_OK)
             
             else:

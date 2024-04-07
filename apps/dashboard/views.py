@@ -9,6 +9,7 @@ from .serializers import CurrencyWalletSerializer, IrWalletSerializer, TicketLis
     TicketAnswerSerializer, AdminChangeTicketStatusSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth import get_user_model
+from rest_framework.pagination import PageNumberPagination
 
 
 User = get_user_model()
@@ -32,14 +33,15 @@ class CurrencyWalletView(APIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-class TicketListForAdminApiView(APIView):
+class TicketListForAdminApiView(generics.ListAPIView):
+    class PagenationSetting(PageNumberPagination):
+        page_size = 10
+
     permission_classes = [IsAuthenticated, IsAdminUser]
-
-    def get(self, request):
-        tickets = Ticket.objects.all().order_by('-created_at')
-        serializer = TicketListSerializer(tickets, many=True)
-        return Response(serializer.data, status.HTTP_200_OK)
-
+    serializer_class = TicketListSerializer
+    queryset = Ticket.objects.all().order_by('-created_at')
+    pagination_class = PagenationSetting
+    
 
 class TicketAnswerAPIView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]

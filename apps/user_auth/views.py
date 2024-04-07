@@ -142,7 +142,7 @@ class UserLevel1ApiView(APIView):
         if serializer.is_valid():
             user = User.objects.filter(email=request.user.email).first()
             if user.user_level == 'Level1':
-                return Response({'status': 'you already in level 1'}, status=status.HTTP_302_FOUND)
+                return Response({'status': 'you already complite level 1'}, status=status.HTTP_302_FOUND)
             
             national_code = serializer.data.get('national_code')
             phone_number = serializer.data.get('phone_number')
@@ -150,7 +150,7 @@ class UserLevel1ApiView(APIView):
             if User.objects.filter(national_code=national_code, phone_number=phone_number).exists():
                 return Response({'status': 'phone number or national code is exists'}, status=status.HTTP_400_BAD_REQUEST)
 
-            if AsUserLevel1CheckModel.objects.filter(user=user).filter(national_code=national_code).exists():
+            if AsUserLevel1CheckModel.objects.filter(user=user).exists():
                 return Response({'status': 'You have already submitted your information, you cannot submit again until your request is rejected'}, status=status.HTTP_208_ALREADY_REPORTED)
                 
             as_level = AsUserLevel1CheckModel(
@@ -179,14 +179,14 @@ class UserLevel2ApiView(APIView):
 
         if serializer.is_valid():
             user = User.objects.filter(email=request.user.email).first()
-            if user.user_level == 'Level1': # if user is level1 can continue
+            if user.user_level >= 'Level1': # if user is level1 can continue
 
                 if user.user_level == 'Level2':
-                    return Response({'status': 'you already in level 2'}, status=status.HTTP_208_ALREADY_REPORTED)
+                    return Response({'status': 'you already complite level 2'}, status=status.HTTP_208_ALREADY_REPORTED)
                 
-                authentication_image = serializer.data.get('authentication_image')
-                print(authentication_image)
-                if AsUserLevel2CheckModel.objects.filter(user=user).filter(authentication_image=authentication_image).exists():
+                authentication_image = request.FILES['authentication_image']
+
+                if AsUserLevel2CheckModel.objects.filter(user=user).exists():
                     return Response({'status': 'You have already submitted your information, you cannot submit again until your request is rejected'}, status=status.HTTP_208_ALREADY_REPORTED)
                 
                 as_level = AsUserLevel2CheckModel(
@@ -194,11 +194,13 @@ class UserLevel2ApiView(APIView):
                     authentication_image = authentication_image
                 )
                 as_level.save()
+
                 return Response({'status': 'Success, the admin accepts or rejects'}, status=status.HTTP_200_OK) # TODO: in status message add 'You will be notified by email'
 
             return Response({'status': 'you need to complete level 1 to go level 2'}, status.HTTP_510_NOT_EXTENDED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @method_decorator([csrf_exempt, ratelimit(key='ip', rate='10/m')], name='dispatch')
@@ -275,53 +277,59 @@ class AsDetailLevel1Info(APIView):
 
 # TODO: complite level 2 as
 
-# class AsAllLevel2Info(generics.ListAPIView):
-#     """
-#     show all level 2 info for admin
-#     """
-#     serializer_class = AllLevel2InfoSeralizer
-#     queryset = AsUserLevel2CheckModel.objects.filter(is_accepted=False).order_by('-created_at')
-#     permission_classes = [IsAdminUser]
+class AsAllLevel2Info(generics.ListAPIView):
+    """
+    show all level 2 requests info for admin
+    """
+    class PagenationSetting(PageNumberPagination):
+        page_size = 10
+
+    serializer_class = AllLevel2InfoSeralizer
+    queryset = AsUserLevel2CheckModel.objects.all().order_by('-created_at')
+    permission_classes = [IsAdminUser]
+    pagination_class = PagenationSetting
 
 
-# class AsDetailLevel2Info(APIView):
-#     """
-#     admin see all info and can accept or reject it
-#     """
-#     permission_classes = [IsAdminUser]
+class AsDetailLevel2Info(APIView):
+    """
+    admin see more info about request and can accept or reject it
+    """
+    permission_classes = [IsAdminUser]
 
-#     def get_level2_info(self, uuid):
-#         user_info = AsUserLevel2CheckModel.objects.filter(uuid__iexact=uuid).first()
-#         if user_info:
-#             return user_info
-#         else:
-#             raise Http404()
+    def get_level2_info(self, uuid):
+        user_info = AsUserLevel2CheckModel.objects.filter(uuid__iexact=uuid).first()
+        if user_info:
+            return user_info
+        else:
+            raise Http404()
 
-#     def get(self, request, uuid):
-#         user_info = self.get_level2_info(uuid)
-#         serializer = DetailLevel2InfoSeralizer(user_info)
-#         return Response(serializer.data, status.HTTP_200_OK)
+    def get(self, request, uuid):
+        user_info = self.get_level2_info(uuid)
+        serializer = DetailLevel2InfoSeralizer(user_info)
+        return Response(serializer.data, status.HTTP_200_OK)
 
-#     def post(self, request, uuid):
-#         serializer = RejectOrAcceptSeralizer(data=request.data)
-#         if serializer.is_valid():
-#             admin_choice = serializer.data.get('admin_choice')
-#             user_info = self.get_level2_info(uuid)
+    def post(self, request, uuid):
+        serializer = RejectOrAcceptSeralizer(data=request.data)
+        if serializer.is_valid():
+            admin_choice = serializer.data.get('admin_choice')
+            user_info = self.get_level2_info(uuid)
 
-#             if admin_choice == 'accept':
-#                 user = User.objects.filter(email=user_info.user).first()
-#                 user.authentication_image = user_info.authentication_image
-#                 user.is_authentication = True
-#                 user.user_level = 'Level2'
-#                 user_info.is_accepted = True
-#                 user.save()
+            if admin_choice == 'accept':
+                user = User.objects.filter(email=user_info.user).first()
 
-#                 return Response({'status': 'ok'}, status.HTTP_200_OK)
+                user.authentication_image = user_info.authentication_image # !!
+                user.is_authentication = True
+                user.user_level = 'Level2'
+                user.save()
 
-#             elif admin_choice == 'reject':
-#                 return Response({'status': 'ok'}, status.HTTP_200_OK)
+                return Response({'status': 'ok'}, status.HTTP_200_OK)
 
-#             else:
-#                 return Response({'status': 'choice is not valid'}, status.HTTP_406_NOT_ACCEPTABLE)
+            elif admin_choice == 'reject':
+                # TODO: Ability to add text to reject the request in AS
+                user_info.delete()
+                return Response({'status': 'ok'}, status.HTTP_200_OK)
 
-#         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'status': 'choice is not valid'}, status.HTTP_406_NOT_ACCEPTABLE)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

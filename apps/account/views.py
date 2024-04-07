@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAdminUser
+from rest_framework.pagination import PageNumberPagination
 
 
 User = get_user_model()
@@ -91,9 +92,13 @@ class AsAllCartBank(generics.ListAPIView):
     """
     show all is_accepted=False in CartBank model for admin
     """
+    class PagenationSetting(PageNumberPagination):
+        page_size = 10
+
     serializer_class = AllCartBankSeralizer
     queryset = CartBankModel.objects.filter(is_accepted=False).order_by('-created_at')
     permission_classes = [IsAdminUser]
+    pagination_class = PagenationSetting
 
 
 class AsDetailCartBank(APIView):

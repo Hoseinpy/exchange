@@ -108,4 +108,4 @@ class DetailLevel2InfoSeralizer(serializers.ModelSerializer):
         fields = ['user', 'authentication_image', 'created_at']
 
     def get_user(self, obj):
-        return obj.user.email
+        return f'{obj.user.first_name} {obj.user.last_name} -- {obj.user.national_code}'

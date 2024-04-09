@@ -48,3 +48,7 @@ class AllCartBankSeralizer(serializers.ModelSerializer):
 
 class RejectOrAcceptSeralizer(serializers.Serializer):
     admin_choice = serializers.CharField(max_length=6, min_length=6, required=True)
+
+
+class RejectTextSeralizer(serializers.Serializer):
+    text = serializers.CharField(max_length=100)

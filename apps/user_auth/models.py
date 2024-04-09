@@ -14,6 +14,7 @@ class AsUserLevel1CheckModel(models.Model):
     national_code = models.CharField(max_length=10, null=True)
     phone_number = models.CharField(max_length=14, null=True)
     
+    is_accepted = models.BooleanField(default=False)
     uuid = models.CharField(max_length=10, default=str(uuid.uuid4())[:10], editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -25,6 +26,7 @@ class AsUserLevel2CheckModel(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     authentication_image = models.ImageField(upload_to='as_level2_image/', null=True)
 
+    is_accepted = models.BooleanField(default=False)
     uuid = models.CharField(max_length=10, default=str(uuid.uuid4())[:10], editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -2,7 +2,8 @@ from django.http import Http404
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (AllCartBankSeralizer, UserSerializer, ChangePasswordSerializer,
-                           CartBankModelSerializer, RejectOrAcceptSeralizer)
+                           CartBankModelSerializer, RejectOrAcceptSeralizer,
+                           RejectTextSeralizer)
 from .models import CartBankModel
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -11,6 +12,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAdminUser
 from rest_framework.pagination import PageNumberPagination
+from utils.send_email import send_email
 
 
 User = get_user_model()
@@ -81,7 +83,7 @@ class AddCartBankApi(APIView):
                 
                 cart = CartBankModel(user=request.user, cart_number=cart_number)
                 cart.save()
-                return Response({'status': 'Success, the admin accepts or rejects'}, status.HTTP_201_CREATED) # TODO: in status message add 'You will be notified by email'
+                return Response({'status': 'Success, the admin accepts or rejects, You will be notified by email'}, status.HTTP_201_CREATED)
 
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
@@ -119,20 +121,25 @@ class AsDetailCartBank(APIView):
     def post(self, request, uuid):
         serializer = RejectOrAcceptSeralizer(data=request.data)
         if serializer.is_valid():
-            admin_choice = serializer.data.get('admin_choice')
+    
             cart = self.get_cart_bank(uuid)
             
+            admin_choice = serializer.data.get('admin_choice')
+
             if admin_choice == 'accept':
                 cart.is_accepted = True
                 cart.save()
                 return Response({'status': 'ok'}, status.HTTP_200_OK)
             
             elif admin_choice == 'reject':
+                serializerr = RejectTextSeralizer(data=request.data)
+                if serializerr.is_valid():
+                    admin_text = serializerr.data.get('text')
+                    send_email(subject='Bank card register request was rejected', context={'text': admin_text, 'user':cart.user}, to=cart.user.email, template_name='account/email_body.html')
+                    cart.delete()
+                    return Response({'status': 'ok'}, status.HTTP_200_OK)
+                return Response(serializerr.errors, status.HTTP_400_BAD_REQUEST)
 
-                # TODO: Ability to add text to reject the request in AS
-                cart.delete()
-                return Response({'status': 'ok'}, status.HTTP_200_OK)
-            
             else:
                 return Response({'status': 'choice is not valid'}, status.HTTP_406_NOT_ACCEPTABLE)
 

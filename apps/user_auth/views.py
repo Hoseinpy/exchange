@@ -9,7 +9,7 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 
-from apps.account.serializers import RejectOrAcceptSeralizer
+from apps.account.serializers import RejectOrAcceptSeralizer, RejectTextSeralizer
 from .models import AsUserLevel1CheckModel, AsUserLevel2CheckModel
 from .serializers import( SingupSerializer, LoginSerializer,
                           ForgetPasswordSerializerStep1,
@@ -162,7 +162,7 @@ class UserLevel1ApiView(APIView):
                 phone_number = phone_number
             )
             as_level.save()
-            return Response({'status': 'Success, the admin accepts or rejects'}, status=status.HTTP_200_OK) # TODO: in status message add 'You will be notified by email'
+            return Response({'status': 'Success, the admin accepts or rejects, You will be notified by email'}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -195,7 +195,7 @@ class UserLevel2ApiView(APIView):
                 )
                 as_level.save()
 
-                return Response({'status': 'Success, the admin accepts or rejects'}, status=status.HTTP_200_OK) # TODO: in status message add 'You will be notified by email'
+                return Response({'status': 'Success, the admin accepts or rejects, You will be notified by email'}, status=status.HTTP_200_OK)
 
             return Response({'status': 'you need to complete level 1 to go level 2'}, status.HTTP_510_NOT_EXTENDED)
 
@@ -222,7 +222,7 @@ class AsAllLevel1Info(generics.ListAPIView):
         page_size = 10
 
     serializer_class = AllLevel1InfoSeralizer
-    queryset = AsUserLevel1CheckModel.objects.all().order_by('-created_at')
+    queryset = AsUserLevel1CheckModel.objects.filter(is_accepted=False).order_by('-created_at')
     permission_classes = [IsAdminUser]
     pagination_class = PagenationSetting
 
@@ -254,28 +254,32 @@ class AsDetailLevel1Info(APIView):
             if admin_choice == 'accept':
                 user = User.objects.filter(email=user_info.user).first()
 
+                user_info.is_accepted = True
                 user.first_name = user_info.first_name
                 user.last_name = user_info.last_name
                 user.father_name = user_info.father_name
                 user.national_code = user_info.national_code
                 user.phone_number = user_info.phone_number
                 user.user_level = 'Level1'
+                
                 user.save()
-
                 return Response({'status': 'ok'}, status.HTTP_200_OK)
             
             elif admin_choice == 'reject':
-                # TODO: Ability to add text to reject the request in AS
-                user_info.delete()
-                return Response({'status': 'ok'}, status.HTTP_200_OK)
-            
+                serializerr = RejectTextSeralizer(data=request.data)
+                if serializerr.is_valid():
+                    admin_text = serializerr.data.get('text')
+                    send_email(subject='request for up user level to 1 was rejected', context={'text': admin_text, 'user':user_info.user}, to=user_info.user.email, template_name='user_auth/level1_reject.html')
+                    user_info.delete()
+                    return Response({'status': 'ok'}, status.HTTP_200_OK)
+                
+                return Response(serializerr.errors, status.HTTP_400_BAD_REQUEST)
+
             else:
                 return Response({'status': 'choice is not valid'}, status.HTTP_406_NOT_ACCEPTABLE)
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-
-# TODO: complite level 2 as
 
 class AsAllLevel2Info(generics.ListAPIView):
     """
@@ -285,7 +289,7 @@ class AsAllLevel2Info(generics.ListAPIView):
         page_size = 10
 
     serializer_class = AllLevel2InfoSeralizer
-    queryset = AsUserLevel2CheckModel.objects.all().order_by('-created_at')
+    queryset = AsUserLevel2CheckModel.objects.filter(is_accepted=False).order_by('-created_at')
     permission_classes = [IsAdminUser]
     pagination_class = PagenationSetting
 
@@ -317,7 +321,8 @@ class AsDetailLevel2Info(APIView):
             if admin_choice == 'accept':
                 user = User.objects.filter(email=user_info.user).first()
 
-                user.authentication_image = user_info.authentication_image # !!
+                user_info.is_accepted = True
+                user.authentication_image = user_info.authentication_image
                 user.is_authentication = True
                 user.user_level = 'Level2'
                 user.save()
@@ -325,9 +330,14 @@ class AsDetailLevel2Info(APIView):
                 return Response({'status': 'ok'}, status.HTTP_200_OK)
 
             elif admin_choice == 'reject':
-                # TODO: Ability to add text to reject the request in AS
-                user_info.delete()
-                return Response({'status': 'ok'}, status.HTTP_200_OK)
+                serializerr = RejectTextSeralizer(data=request.data)
+                if serializerr.is_valid():
+                    admin_text = serializerr.data.get('text')
+                    send_email(subject='request for up user level to 2 was rejected', context={'text': admin_text, 'user':user_info.user}, to=user_info.user.email, template_name='user_auth/level2_reject.html')
+                    user_info.delete()
+                    return Response({'status': 'ok'}, status.HTTP_200_OK)
+                
+                return Response(serializerr.errors, status.HTTP_400_BAD_REQUEST)
 
             else:
                 return Response({'status': 'choice is not valid'}, status.HTTP_406_NOT_ACCEPTABLE)

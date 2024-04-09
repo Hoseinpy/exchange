@@ -40,7 +40,7 @@ lets go!
 - [x] add admin system for if user add new cart-bank, up user level admin reject or accept it (AS)
 - [x] complite level 2 AS
 - [x] Once the user has sent level 1 and 2 information, she/he cannot send again until her request is rejected
-- [ ] Ability to add text to reject the request in AS and send in email for user
+- [x] Ability to add text to reject the request in AS and send in email for user
 - [x] wirte clean code for view user level1
 ---
 - [ ] Increase site security

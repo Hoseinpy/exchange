@@ -1,3 +1,4 @@
+import uuid
 from django.http import Http404
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
@@ -72,7 +73,7 @@ class AddCartBankApi(APIView):
     """
     permission_classes = [IsAuthenticated]
 
-    def post(self, request): # !!
+    def post(self, request):
         user = request.user
         if user.user_level > 'Level0':
             serializer = CartBankModelSerializer(data=request.data)
@@ -81,7 +82,7 @@ class AddCartBankApi(APIView):
                 if CartBankModel.objects.filter(user=user).filter(cart_number=cart_number).exists():
                     return Response({'status': 'this cart-number is already exists'}, status.HTTP_302_FOUND)
                 
-                cart = CartBankModel(user=request.user, cart_number=cart_number)
+                cart = CartBankModel(user=request.user, cart_number=cart_number, uuid=str(uuid.uuid4())[:15])
                 cart.save()
                 return Response({'status': 'Success, the admin accepts or rejects, You will be notified by email'}, status.HTTP_201_CREATED)
 

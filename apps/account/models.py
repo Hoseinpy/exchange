@@ -110,7 +110,7 @@ def create_user_currency_wallet(sender, instance=None, created=False, **kwargs):
 class CartBankModel(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     cart_number = models.CharField(max_length=16)
-    uuid = models.CharField(max_length=10, default=str(uuid.uuid4())[:10], editable=False)
+    uuid = models.CharField(max_length=15, editable=False)
 
     is_accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)

@@ -1,3 +1,4 @@
+import uuid
 from django.http import Http404
 from django.shortcuts import render
 from django.utils.crypto import get_random_string
@@ -159,7 +160,8 @@ class UserLevel1ApiView(APIView):
                 last_name = serializer.data.get('last_name'),
                 father_name = serializer.data.get('father_name'),
                 national_code = national_code,
-                phone_number = phone_number
+                phone_number = phone_number,
+                uuid= str(uuid.uuid4())[:15]
             )
             as_level.save()
             return Response({'status': 'Success, the admin accepts or rejects, You will be notified by email'}, status=status.HTTP_200_OK)
@@ -191,7 +193,8 @@ class UserLevel2ApiView(APIView):
                 
                 as_level = AsUserLevel2CheckModel(
                     user = user,
-                    authentication_image = authentication_image
+                    authentication_image = authentication_image,
+                    uuid= str(uuid.uuid4())[:15]
                 )
                 as_level.save()
 
@@ -263,7 +266,8 @@ class AsDetailLevel1Info(APIView):
                 user.user_level = 'Level1'
                 
                 user.save()
-                return Response({'status': 'success, accept'}, status.HTTP_200_OK)
+                user_info.save()
+                return Response({'status': 'ok'}, status.HTTP_200_OK)
             
             elif admin_choice == 'reject':
                 serializerr = RejectTextSeralizer(data=request.data)
@@ -271,7 +275,7 @@ class AsDetailLevel1Info(APIView):
                     admin_text = serializerr.data.get('text')
                     send_email(subject='request for up user level to 1 was rejected', context={'text': admin_text, 'user':user_info.user}, to=user_info.user.email, template_name='user_auth/level1_reject.html')
                     user_info.delete()
-                    return Response({'status': 'success, reject'}, status.HTTP_200_OK)
+                    return Response({'status': 'ok'}, status.HTTP_200_OK)
                 
                 return Response(serializerr.errors, status.HTTP_400_BAD_REQUEST)
 
@@ -325,8 +329,9 @@ class AsDetailLevel2Info(APIView):
                 user.authentication_image = user_info.authentication_image
                 user.is_authentication = True
                 user.user_level = 'Level2'
+                
                 user.save()
-
+                user_info.save()
                 return Response({'status': 'ok'}, status.HTTP_200_OK)
 
             elif admin_choice == 'reject':

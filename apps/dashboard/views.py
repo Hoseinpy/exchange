@@ -1,3 +1,4 @@
+import uuid
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status, generics
@@ -126,7 +127,9 @@ class TicketAddApiView(APIView):
     def post(self, request):
         serializer = TicketDetailSerializer(data=request.data)
         if serializer.is_valid():
-            Ticket.objects.create(user=request.user, title=serializer.validated_data['title'], description=serializer.validated_data['description'], status='pending')
+            Ticket.objects.create(user=request.user, title=serializer.validated_data['title'],
+                                   description=serializer.validated_data['description'], status='Pending', uuid=str(uuid.uuid4())[:14])
+            
             return Response({'statsu': 'success'}, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

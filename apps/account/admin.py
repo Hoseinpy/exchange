@@ -6,7 +6,7 @@ from .models import CustomUser, CurrencyWallet, CartBankModel, Currency
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ("id", "email", "user_level", "balance", "is_authentication", "is_staff", "is_active",)
+    list_display = ("id", "email", "phone_number", "user_level", "balance", "is_authentication", "is_staff", "is_active",)
     list_filter = ("is_authentication", "user_level", "is_staff", "is_active",)
     fieldsets = (
         (None, {"fields": ("email", "password", "balance", "first_name", "last_name", "father_name", "phone_number", "national_code")}),
@@ -21,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
             )}
          ),
     )
-    search_fields = ("email", 'first_name', 'last_name', 'phone_number')
+    search_fields = ("email", 'first_name', 'last_name', 'phone_number', 'national_code', 'father_name')
     ordering = ("id",)
 
 

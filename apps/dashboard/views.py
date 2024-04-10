@@ -97,7 +97,7 @@ class TicketListForOwnerApiView(APIView):
 
 
 class TicketDetailForUserApiView(APIView):
-    """ owner see more info from ticket and reply message"""
+    """ owner see more info from ticket and reply message """
     def current_ticket(self, uuid):
         ticket = Ticket.objects.filter(uuid__iexact=uuid).first()
         if ticket:

@@ -5,6 +5,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 
 
+# send email func 
 def send_email(subject, context, to, template_name):
     try:
         html_message = render_to_string(template_name, context)

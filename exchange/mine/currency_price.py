@@ -5,12 +5,11 @@ from rest_framework.response import Response
 
 
 @api_view(['GET'])
-def btc_price(request):
+def currency_price(request, name):
 
-    url = 'https://api.nobitex.ir/v2/orderbook/BTCUSDT'
-    response = requests.get(url)
-
-    res = response.json()
+    url = f'https://api.nobitex.ir/v2/orderbook/{name}'
+    
+    res = requests.get(url).json()
     price = res['lastTradePrice'] 
 
-    return Response(price, status.HTTP_200_OK)
+    return Response(f'{name}: {price}', status.HTTP_200_OK)

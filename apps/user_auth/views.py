@@ -1,32 +1,31 @@
 import uuid
 from django.http import Http404
 from django.shortcuts import render
-from django.utils.crypto import get_random_string
-from rest_framework.authtoken.models import Token
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from django.utils.crypto import get_random_string
+from django.contrib.auth import authenticate
+from utils.send_email import send_email
 from rest_framework.response import Response
 from rest_framework import status, generics
+
+from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
-
-from apps.account.serializers import RejectOrAcceptSeralizer, RejectTextSeralizer
-from .models import AsUserLevel1CheckModel, AsUserLevel2CheckModel
-from .serializers import( SingupSerializer, LoginSerializer,
-                          ForgetPasswordSerializerStep1,
-                          ForgetPasswordSerializerStep2,
-                          UserLevel1Serializer, UserLevel2Serializer,
-                          AllLevel1InfoSeralizer, DetailLevel1InfoSeralizer,
-                          AllLevel2InfoSeralizer, DetailLevel2InfoSeralizer)
-from django.contrib.auth import authenticate
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from utils.send_email import send_email
 from django_ratelimit.decorators import ratelimit
 from rest_framework.permissions import IsAdminUser
 from rest_framework.pagination import PageNumberPagination
+from apps.account.serializers import RejectOrAcceptSeralizer, RejectTextSeralizer
+from .models import AsUserLevel1CheckModel, AsUserLevel2CheckModel
 
+from .serializers import( SingupSerializer, LoginSerializer, ForgetPasswordSerializerStep1,
+                          ForgetPasswordSerializerStep2, UserLevel1Serializer, UserLevel2Serializer,
+                          AllLevel1InfoSeralizer, DetailLevel1InfoSeralizer, AllLevel2InfoSeralizer, 
+                          DetailLevel2InfoSeralizer)
 
+# get user model
 User = get_user_model()
 
 

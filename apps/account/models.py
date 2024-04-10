@@ -76,12 +76,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
-
-
 class CurrencyWallet(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     price = models.DecimalField(max_digits=30, decimal_places=2, null=True)
@@ -99,14 +93,6 @@ class Currency(models.Model):
         return self.name
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_user_currency_wallet(sender, instance=None, created=False, **kwargs):
-    if created:
-        c = Currency.objects.all()
-        for i in c:
-            CurrencyWallet.objects.create(user=instance, currency=i, price=0, code=str(uuid.uuid4())[:16])
-
-
 class CartBankModel(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     cart_number = models.CharField(max_length=16)
@@ -117,3 +103,19 @@ class CartBankModel(models.Model):
 
     def __str__(self):
         return f'{self.user.email} -- {self.cart_number}'
+
+
+# when user singup create token for him
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
+
+
+# when user singup create currency wallet 
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_user_currency_wallet(sender, instance=None, created=False, **kwargs):
+    if created:
+        c = Currency.objects.all()
+        for i in c:
+            CurrencyWallet.objects.create(user=instance, currency=i, price=0, code=str(uuid.uuid4())[:16])

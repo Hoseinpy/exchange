@@ -25,7 +25,9 @@ class Ticket(models.Model):
 
 class TicketAnswer(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='answers')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='user')
     answer = models.TextField(max_length=600)
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

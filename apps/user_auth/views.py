@@ -208,7 +208,7 @@ class UserLevel3APiView(APIView):
     permission_classes = [IsAuthenticated]
 
     """
-    if user total buy is 1500$ user can go level 3
+    if user total buy and sell is 1500$ user can go level 3
     """
     def post(self, request):
         pass
@@ -263,7 +263,7 @@ class AsDetailLevel1Info(APIView):
                 user.user_level = 'Level1'
                 
                 user.save()
-                return Response({'status': 'ok'}, status.HTTP_200_OK)
+                return Response({'status': 'success, accept'}, status.HTTP_200_OK)
             
             elif admin_choice == 'reject':
                 serializerr = RejectTextSeralizer(data=request.data)
@@ -271,7 +271,7 @@ class AsDetailLevel1Info(APIView):
                     admin_text = serializerr.data.get('text')
                     send_email(subject='request for up user level to 1 was rejected', context={'text': admin_text, 'user':user_info.user}, to=user_info.user.email, template_name='user_auth/level1_reject.html')
                     user_info.delete()
-                    return Response({'status': 'ok'}, status.HTTP_200_OK)
+                    return Response({'status': 'success, reject'}, status.HTTP_200_OK)
                 
                 return Response(serializerr.errors, status.HTTP_400_BAD_REQUEST)
 
@@ -335,6 +335,7 @@ class AsDetailLevel2Info(APIView):
                     admin_text = serializerr.data.get('text')
                     send_email(subject='request for up user level to 2 was rejected', context={'text': admin_text, 'user':user_info.user}, to=user_info.user.email, template_name='user_auth/level2_reject.html')
                     user_info.delete()
+                    
                     return Response({'status': 'ok'}, status.HTTP_200_OK)
                 
                 return Response(serializerr.errors, status.HTTP_400_BAD_REQUEST)

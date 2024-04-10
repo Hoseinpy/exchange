@@ -30,10 +30,19 @@ class IrWalletSerializer(serializers.ModelSerializer):
 
 
 class TicketAnswerSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = TicketAnswer
-        fields = ['answer', 'created_at']
+        fields = ['user', 'answer', 'created_at']
+
+    def get_user(self, obj): # TODO: fix
+        try:
+            if obj.user.first_name:
+                return obj.user.first_name + ' ' + obj.user.last_name
+            return obj.user.email
+        except:
+            pass
 
 
 class TicketListSerializer(serializers.ModelSerializer):
@@ -65,7 +74,7 @@ class TicketDetailSerializer(serializers.ModelSerializer):
             return obj.user.email
 
 
-class AdminChangeTicketStatusSerializer(serializers.ModelSerializer):
+class AdminChangeTicketStatusSerializer(serializers.ModelSerializer): # change ticket status
     class Meta:
         model = Ticket
         fields = ['status']

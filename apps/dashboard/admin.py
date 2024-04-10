@@ -10,4 +10,4 @@ class TicketAdmin(admin.ModelAdmin):
 
 @admin.register(TicketAnswer)
 class TicketAnswerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'ticket', 'answer', 'created_at']
+    list_display = ['id', 'user', 'ticket', 'answer', 'created_at']

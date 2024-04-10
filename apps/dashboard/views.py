@@ -16,6 +16,7 @@ User = get_user_model()
 
 
 class IrWalletView(APIView):
+    """ user see his ir wallet """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -25,6 +26,7 @@ class IrWalletView(APIView):
 
 
 class CurrencyWalletView(APIView):
+    """ user see his currency wallet """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -34,18 +36,67 @@ class CurrencyWalletView(APIView):
 
 
 class TicketListForAdminApiView(generics.ListAPIView):
+    """ admin see all tickets """
     class PagenationSetting(PageNumberPagination):
         page_size = 10
 
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAdminUser]
     serializer_class = TicketListSerializer
     queryset = Ticket.objects.all().order_by('-created_at')
     pagination_class = PagenationSetting
     
 
-class TicketAnswerAPIView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+class TicketDetailForAdminAPIView(APIView):
+    
+    """ admin see more info from ticket and reply message or can change ticket status"""
+    
+    permission_classes = [IsAdminUser]
 
+    def current_ticket(self, uuid):
+        ticket = Ticket.objects.filter(uuid__iexact=uuid).first()
+        if ticket:
+            return ticket
+        else:
+            raise Http404()
+
+    def get(self, request, uuid):
+        serializer = TicketDetailSerializer(self.current_ticket(uuid))
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    def post(self, request, uuid): # add answer
+        serializer = TicketAnswerSerializer(data=request.data)
+        if serializer.is_valid():
+            admin_answer = serializer.data.get('answer')
+            answer = TicketAnswer.objects.create(ticket=self.current_ticket(uuid), answer=admin_answer, user=request.user)
+            answer.save()
+            return Response({'status': 'success'}, status.HTTP_200_OK)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, uuid): # change ticket status
+        ticket = self.current_ticket(uuid)
+        serializer = AdminChangeTicketStatusSerializer(ticket, data=request.data)
+        if serializer.is_valid():
+            change_status = serializer.validated_data.get('status')
+            ticket.status = change_status
+            serializer.save()
+            return Response({'status': 'success'}, status.HTTP_200_OK)
+
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class TicketListForOwnerApiView(APIView):
+    """ The owner sees all his tickets """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        tickets = Ticket.objects.filter(user=request.user).order_by('-created_at')
+        serializer = TicketListSerializer(tickets, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
+class TicketDetailForUserApiView(APIView):
+    """ owner see more info from ticket and reply message"""
     def current_ticket(self, uuid):
         ticket = Ticket.objects.filter(uuid__iexact=uuid).first()
         if ticket:
@@ -60,42 +111,16 @@ class TicketAnswerAPIView(APIView):
     def post(self, request, uuid):
         serializer = TicketAnswerSerializer(data=request.data)
         if serializer.is_valid():
-            admin_answer = serializer.data.get('answer')
-            answer = TicketAnswer.objects.create(ticket=self.current_ticket(uuid), answer=admin_answer)
+            user_answer = serializer.data.get('answer')
+            answer = TicketAnswer.objects.create(ticket=self.current_ticket(uuid), answer=user_answer, user=request.user)
             answer.save()
             return Response({'status': 'success'}, status.HTTP_200_OK)
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, uuid):
-        ticket = self.current_ticket(uuid)
-        serializer = AdminChangeTicketStatusSerializer(ticket, data=request.data)
-        if serializer.is_valid():
-            change_status = serializer.validated_data.get('status')
-            ticket.status = change_status
-            serializer.save()
-            return Response({'status': 'success'}, status.HTTP_200_OK)
-
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-
-
-class TicketListForOwnerApiView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        tickets = Ticket.objects.filter(user=request.user).order_by('-created_at')
-        serializer = TicketListSerializer(tickets, many=True)
-        return Response(serializer.data, status.HTTP_200_OK)
-
-
-class TicketDetailApiView(generics.RetrieveAPIView):
-    permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
-    queryset = Ticket.objects.all().order_by('-created_at')
-    serializer_class = TicketDetailSerializer
-    lookup_field = 'uuid'
-
 
 class TicketAddApiView(APIView):
+    """ user can add ticket """
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

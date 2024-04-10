@@ -47,3 +47,4 @@ lets go!
 - [x] add command for all views
 - [x] add reCaptcha # maybe work or not work
 - [ ] dockerize the project
+- [x] in ticket also user can reply for admin

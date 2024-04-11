@@ -76,6 +76,7 @@ load_dotenv()
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# db setting
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -141,7 +142,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-
+# send email setting
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'

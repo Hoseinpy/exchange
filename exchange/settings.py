@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_recaptcha',
     'rest_framework_swagger',
+    'corsheaders',
 
     # apps
     'apps.user_auth',
@@ -48,6 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'exchange.urls'
@@ -158,3 +161,15 @@ EMAIL_PORT = 587
 
 # google recaptcha secret key
 DRF_RECAPTCHA_SECRET_KEY = os.getenv('DRF_RECAPTCHA_SECRET_KEY')
+
+
+# allowed methods
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "POST",
+    "PUT",
+)
+
+# allowed origins
+CORS_ALLOW_ALL_ORIGINS = True

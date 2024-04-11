@@ -108,8 +108,7 @@ class AsDetailCartBank(APIView):
     permission_classes = [IsAdminUser]
 
     def get_cart_bank(self, uuid):
-        cart = CartBankModel.objects.filter(uuid__iexact=uuid).first()
-        if cart:
+        if cart := CartBankModel.objects.filter(uuid__iexact=uuid).first():
             return cart
         else:
             return Http404()

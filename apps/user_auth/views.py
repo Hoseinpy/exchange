@@ -236,8 +236,7 @@ class AsDetailLevel1Info(APIView):
     permission_classes = [IsAdminUser]
 
     def get_level1_info(self, uuid):
-        user_info = AsUserLevel1CheckModel.objects.filter(uuid__iexact=uuid).first()
-        if user_info:
+        if user_info := AsUserLevel1CheckModel.objects.filter(uuid__iexact=uuid).first():
             return user_info
         else:
             raise Http404()
@@ -304,8 +303,7 @@ class AsDetailLevel2Info(APIView):
     permission_classes = [IsAdminUser]
 
     def get_level2_info(self, uuid):
-        user_info = AsUserLevel2CheckModel.objects.filter(uuid__iexact=uuid).first()
-        if user_info:
+        if user_info := AsUserLevel2CheckModel.objects.filter(uuid__iexact=uuid).first():
             return user_info
         else:
             raise Http404()

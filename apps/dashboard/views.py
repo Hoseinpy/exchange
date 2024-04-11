@@ -54,8 +54,7 @@ class TicketDetailForAdminAPIView(APIView):
     permission_classes = [IsAdminUser]
 
     def current_ticket(self, uuid):
-        ticket = Ticket.objects.filter(uuid__iexact=uuid).first()
-        if ticket:
+        if ticket := Ticket.objects.filter(uuid__iexact=uuid).first():
             return ticket
         else:
             raise Http404()
@@ -99,8 +98,7 @@ class TicketListForOwnerApiView(APIView):
 class TicketDetailForUserApiView(APIView):
     """ owner see more info from ticket and reply message """
     def current_ticket(self, uuid):
-        ticket = Ticket.objects.filter(uuid__iexact=uuid).first()
-        if ticket:
+        if ticket := Ticket.objects.filter(uuid__iexact=uuid).first():
             return ticket
         else:
             raise Http404()

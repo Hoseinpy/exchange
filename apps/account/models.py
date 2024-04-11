@@ -56,9 +56,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     father_name = models.CharField(max_length=30, null=True)
     national_code = models.CharField(max_length=10, null=True)
     verify_code = models.CharField(max_length=72, null=True)
-    user_level = models.CharField(max_length=6, choices=LevelChoice.choices, null=True, default=0)
+    user_level = models.CharField(max_length=6, choices=LevelChoice.choices, default='Level0')
     phone_number = models.CharField(max_length=14, null=True)
-    authentication_image = models.ImageField(upload_to='user_info/', null=True)
+    authentication_image = models.ImageField(upload_to='authentication_images/', null=True)
     balance = models.DecimalField(max_digits=30, decimal_places=0, default=0)
     total_buying_and_selling = models.DecimalField(max_digits=30, decimal_places=0, default=0)
 

@@ -10,8 +10,8 @@ schema_view = get_swagger_view(title='Documenting API')
 
 
 urlpatterns = [
-    # django admin
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls), # django admin
+    
     path('api/auth/', include('apps.user_auth.urls')),
     path('api/', include('apps.account.urls')),
     path('api/v1/price/<str:name>', currency_price, name='currency-price-api'),

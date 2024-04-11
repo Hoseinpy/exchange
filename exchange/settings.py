@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_recaptcha',
+    'rest_framework_swagger',
 
     # apps
     'apps.user_auth',
@@ -135,12 +136,16 @@ MEDIA_ROOT = BASE_DIR / 'uploads'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# django rest setting
 REST_FRAMEWORK = {
-    # other settings...
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'exchange.mine.authentication.TokenAuthSupportCookie',
     ),
+    'DEFAULT_SCHEMA_CLASS': (
+        'rest_framework.schemas.coreapi.AutoSchema'
+    ),
 }
+
 
 # send email setting
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

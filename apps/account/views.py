@@ -112,7 +112,7 @@ class AsDetailCartBank(APIView):
         if cart:
             return cart
         else:
-            raise Http404()
+            return Http404()
 
     def get(self, request, uuid):
         cart = self.get_cart_bank(uuid)

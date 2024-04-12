@@ -39,3 +39,4 @@
 - [ ] dockerize the project
 - [x] in ticket also user can reply for admin
 - [ ] change db to mysql
+- [ ] check if email exists show error in singup

@@ -37,7 +37,11 @@ class SingupApiView(APIView):
     def post(self, request):
         serializer = SingupSerializer(data=request.data)
         if serializer.is_valid():
-            user = User.objects.create(email=serializer.data.get('email'),
+            email = serializer.data.get('email')
+            if User.objects.filter(email=email).exists():
+                return Response({'status': 'Email already registered'}, status=status.HTTP_400_BAD_REQUEST)
+
+            user = User.objects.create(email=email,
                                         verify_code=get_random_string(72))
             
             user.set_password(serializer.data.get('password'))
@@ -102,7 +106,7 @@ class ForgetPasswordApiView(APIView):
                 return Response({'status': 'email not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-@method_decorator([csrf_exempt, ratelimit(key='ip', rate='2/m')], name='dispatch')
+@method_decorator([csrf_exempt, ratelimit(key='ip', rate='5/m')], name='dispatch')
 class ForgetPasswordVerifyAPIView(APIView):
     """
     if user verify code is rigth, user can change password

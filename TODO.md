@@ -38,4 +38,5 @@
 - [x] add reCaptcha # maybe work or not work
 - [ ] dockerize the project
 - [x] in ticket also user can reply for admin
-- [x] change db to postgresql
+- [ ] change db to mysql
+- [ ] check if email exists show error in singup

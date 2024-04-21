@@ -65,7 +65,7 @@ class LoginAPiView(APIView):
                 token = Token.objects.filter(user=user).first()
                 response = Response()
 
-                response.set_cookie(key='token', value=token, max_age=4320, httponly=True)
+                response.set_cookie(key='token', value=token, max_age=4320, httponly=True, secure=True) # add secure option
                 response.data = {
                     'status': 'success',
                 }

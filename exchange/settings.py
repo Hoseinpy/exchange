@@ -80,6 +80,7 @@ load_dotenv()
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 # db setting
 # DATABASES = {
 #     'default': {
@@ -92,6 +93,7 @@ load_dotenv()
 #     }
 # }
 
+# for sqlite3 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

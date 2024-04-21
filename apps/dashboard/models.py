@@ -8,9 +8,9 @@ User = get_user_model()
 
 class Ticket(models.Model):
     class StatusChoice(models.TextChoices):
-        pending = 'Pending'
-        open = 'Open'
-        closed = 'Closed'
+        pending = 'pending'
+        open = 'open'
+        closed = 'closed'
 
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=600)

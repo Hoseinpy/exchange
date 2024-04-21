@@ -79,7 +79,7 @@ class TicketDetailForAdminAPIView(APIView):
         if serializer.is_valid():
             change_status = serializer.validated_data.get('status')
             ticket.status = change_status
-            serializer.save()
+            ticket.save()
             return Response({'status': 'success'}, status.HTTP_200_OK)
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

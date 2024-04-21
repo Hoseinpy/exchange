@@ -74,7 +74,12 @@ class TicketDetailSerializer(serializers.ModelSerializer):
             return obj.user.email
 
 
-class AdminChangeTicketStatusSerializer(serializers.ModelSerializer): # change ticket status
-    class Meta:
-        model = Ticket
-        fields = ['status']
+CHOICES = {
+    "pending": "pending",
+    "open": "open",
+    "closed": "closed"
+}
+
+
+class AdminChangeTicketStatusSerializer(serializers.Serializer): # change ticket status
+    status = serializers.ChoiceField(choices=CHOICES)
